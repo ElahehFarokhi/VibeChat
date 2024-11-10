@@ -1,4 +1,6 @@
-<!-- <h1>Homeeeeeee</h1> -->
+<ng-container *ngIf="clientName">
+  <h1>Welcome {{clientName}} !</h1>
+</ng-container>
 <ng-container *ngIf="openChat === false">
   <div class="text-center">
       <h1>Let's get you connected and <span class="text-danger">chat</span> with other <span

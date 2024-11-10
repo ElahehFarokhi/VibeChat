@@ -26,6 +26,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     public chatService: ChatService,
     private modalService: NgbModal
   ) {}
+  
   ngOnInit(): void {
     this.chatService.createChatConnection();
   }

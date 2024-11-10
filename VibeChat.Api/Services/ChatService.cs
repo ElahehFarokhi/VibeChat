@@ -9,12 +9,7 @@ namespace VibeChat.Api.Services
         //key, value eg: { {"John","John's ConnectionId"},{"Tom","Tom's ConnectionId"} }
         private static readonly Dictionary<string, string> Users = [];
 
-        public ChatService()
-        {
-
-        }
-
-        public bool AddUserToServive(string userToAdd) 
+        public bool AddUserToList(string userToAdd) 
         {
             lock (Users) 
             {
@@ -31,7 +26,7 @@ namespace VibeChat.Api.Services
 
         }
 
-        public void AddUserConnectionId(string user,string connectionId) 
+        public void AddUserConnection(string user,string connectionId) 
         {
             lock (Users) 
             {
@@ -60,10 +55,7 @@ namespace VibeChat.Api.Services
 
         public void RemoveUserFromList(string user)
         {
-            if (Users.ContainsKey(user))
-            {
-                Users.Remove(user);
-            }
+            Users.Remove(user);
         }
 
         public string[] GetOnlineUser()

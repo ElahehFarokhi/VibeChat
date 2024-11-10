@@ -21,6 +21,10 @@ export class HomeComponent {
   submitted: boolean;
   apiErrorMessages: string[] = [];
   openChat = false;
+
+  public get clientName(){
+    return this.chatService.getClientName;
+  }
   constructor(
     private formBuilder: FormBuilder,
     private chatService: ChatService
@@ -28,6 +32,7 @@ export class HomeComponent {
     this.submitted = false;
     this.initializeForm();
   }
+
   initializeForm() {
     this.userForm = this.formBuilder.group({
       name: [
@@ -47,7 +52,7 @@ export class HomeComponent {
     if (this.userForm.valid) {
       this.chatService.registerUser(this.userForm.value).subscribe({
         next: () => {
-          this.chatService.myName = this.userForm.get('name')?.value;
+          this.chatService.clientName = this.userForm.get('name')?.value;
           this.openChat = true;
           this.userForm.reset();
           this.submitted = false;
@@ -64,5 +69,6 @@ export class HomeComponent {
 
   closeChat() {
     this.openChat = false;
+    this.chatService.resetClientName();
   }
 }

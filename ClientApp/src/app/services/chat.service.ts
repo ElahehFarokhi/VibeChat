@@ -11,7 +11,12 @@ import { environment } from '../../environments/environment.development';
   providedIn: 'root'
 })
 export class ChatService {
-  myName: string = '';
+  clientName: string = '';
+
+  public get getClientName(){
+    return this.clientName;
+  }
+
   private chatConnection?: HubConnection
   onlineUsers: string[] = [];
   messages: Message[] = [];
@@ -70,14 +75,14 @@ export class ChatService {
   }
 
   async addUserConnectionId() {
-    return this.chatConnection?.invoke('AddUserConnectionId', this.myName).catch(error => {
+    return this.chatConnection?.invoke('AddUserConnectionId', this.clientName).catch(error => {
       console.error(error);
     });
   }
 
   async sendMessage(content: string) {
     const message: Message = {
-      from: this.myName,
+      from: this.clientName,
       content
     };
     return this.chatConnection?.invoke("ReceiveMessage", message).catch(error => {
@@ -87,7 +92,7 @@ export class ChatService {
 
   async sendPrivateMessage(to: string, content: string) {
     const message: Message = {
-      from: this.myName,
+      from: this.clientName,
       to,
       content
     };
@@ -109,9 +114,13 @@ export class ChatService {
   }
 
   async closePrivateChatMessage(otherUser: string) {
-    return this.chatConnection?.invoke('RemovePrivateChat', this.myName, otherUser).catch(error => {
+    return this.chatConnection?.invoke('RemovePrivateChat', this.clientName, otherUser).catch(error => {
       console.error(error);
     });
 
+  }
+
+  public resetClientName(){
+    this.clientName = '';
   }
 }
