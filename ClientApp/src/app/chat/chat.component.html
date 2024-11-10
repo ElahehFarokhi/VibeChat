@@ -11,7 +11,8 @@
       <div class="card border-secondary mb-3">
           <div class="card-header h3 text-muted text-center">Users</div>
           <div class="card-body" style="min-height: 565px;">
-              <div class="row mt-1" *ngFor="let user of chatService.onlineUsers">
+            @for(user of chatService.onlineUsers; track user){
+              <div class="row mt-1">
                   <div class="col">
                       <div class="d-grid">
                           <button class="btn card-text btn-block" [ngClass]="{
@@ -21,6 +22,7 @@
                       </div>
                   </div>
               </div>
+            }
           </div>
       </div>
   </div>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, NgModule, Output } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -10,7 +10,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class ChatInputComponent {
   content: string = '';
-  @Output() contentEmitter = new EventEmitter();
+  // @Output() contentEmitter = new EventEmitter();
+  contentEmitter = output<string>();
 
   submitMessage() {
     if (this.content.trim() !== "") {

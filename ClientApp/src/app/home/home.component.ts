@@ -7,12 +7,11 @@ import {
 } from '@angular/forms';
 import { ChatService } from '../services/chat.service';
 import { ChatComponent } from '../chat/chat.component';
-import { NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ReactiveFormsModule, ChatComponent, NgIf, NgFor],
+  imports: [ReactiveFormsModule, ChatComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

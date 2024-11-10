@@ -8,37 +8,43 @@ import { PrivateChatComponent } from '../private-chat/private-chat.component';
 import { environment } from '../../environments/environment.development';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ChatService {
   clientName: string = '';
 
-  public get getClientName(){
+  public get getClientName() {
     return this.clientName;
   }
 
-  private chatConnection?: HubConnection
+  private chatConnection?: HubConnection;
   onlineUsers: string[] = [];
   messages: Message[] = [];
   privateMessages: Message[] = [];
   privateMessageInitiated = false;
 
-  constructor(private httpClient: HttpClient, private modalServce: NgbModal) { }
+  constructor(private httpClient: HttpClient, private modalServce: NgbModal) {}
 
   registerUser(user: User) {
-    return this.httpClient.post(`${environment.apiUrl}api/chat/register-user`, user, { responseType: 'text' });
+    return this.httpClient.post(
+      `${environment.apiUrl}api/chat/register-user`,
+      user,
+      { responseType: 'text' }
+    );
   }
 
   createChatConnection() {
     this.chatConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.apiUrl}hubs/chat`).withAutomaticReconnect().build();
+      .withUrl(`${environment.apiUrl}hubs/chat`)
+      .withAutomaticReconnect()
+      .build();
 
-    this.chatConnection.start().catch(error => {
+    this.chatConnection.start().catch((error) => {
       console.error(error);
     });
 
     this.chatConnection.on('UserConnected', () => {
-      this.addUserConnectionId()
+      this.addUserConnectionId();
     });
 
     this.chatConnection.on('OnlineUsers', (onlineUsers) => {
@@ -50,6 +56,7 @@ export class ChatService {
     });
 
     this.chatConnection.on('OpenPrivateChat', (newMessage: Message) => {
+      debugger
       this.privateMessages = [...this.privateMessages, newMessage];
       this.privateMessageInitiated = true;
       const modalRef = this.modalServce.open(PrivateChatComponent);
@@ -65,62 +72,70 @@ export class ChatService {
       this.privateMessages = [];
       this.modalServce.dismissAll();
     });
-
   }
 
   stopChatConnection() {
-    this.chatConnection?.stop().catch(error => {
+    this.chatConnection?.stop().catch((error) => {
       console.error(error);
     });
   }
 
   async addUserConnectionId() {
-    return this.chatConnection?.invoke('AddUserConnectionId', this.clientName).catch(error => {
-      console.error(error);
-    });
+    return this.chatConnection
+      ?.invoke('AddUserConnectionId', this.clientName)
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   async sendMessage(content: string) {
     const message: Message = {
       from: this.clientName,
-      content
+      content,
     };
-    return this.chatConnection?.invoke("ReceiveMessage", message).catch(error => {
-      console.error(error);
-    });
+    return this.chatConnection
+      ?.invoke('ReceiveMessage', message)
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   async sendPrivateMessage(to: string, content: string) {
+    debugger;
     const message: Message = {
       from: this.clientName,
       to,
-      content
+      content,
     };
 
     if (!this.privateMessageInitiated) {
       this.privateMessageInitiated = true;
-      return this.chatConnection?.invoke("CreatePrivateChat", message)
+      return this.chatConnection
+        ?.invoke('CreatePrivateChat', message)
         .then(() => {
-          this.privateMessages = [...this.privateMessages, message]
+          this.privateMessages = [...this.privateMessages, message];
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
     } else {
-      return this.chatConnection?.invoke("ReceivePrivateMessage", message).catch(error => {
-        console.error(error);
-      });
+      return this.chatConnection
+        ?.invoke('ReceivePrivateMessage', message)
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }
 
   async closePrivateChatMessage(otherUser: string) {
-    return this.chatConnection?.invoke('RemovePrivateChat', this.clientName, otherUser).catch(error => {
-      console.error(error);
-    });
-
+    return this.chatConnection
+      ?.invoke('RemovePrivateChat', this.clientName, otherUser)
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
-  public resetClientName(){
+  public resetClientName() {
     this.clientName = '';
   }
 }
